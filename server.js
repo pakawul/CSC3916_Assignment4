@@ -105,29 +105,25 @@ router.get('/movies', function(req, res) {
     });
 });
 
-// GET movie by id
-// If ?reviews=true, include reviews using $lookup
-router.get('/movies/:id', async function(req, res) {
+router.get('/movies/title/:title', async function(req, res) {
     try {
-        var movieId = req.params.id;
-        var includeReviews = req.query.reviews === 'true';
-
-        if (!mongoose.Types.ObjectId.isValid(movieId)) {
-            return res.status(404).json({ message: 'Movie not found' });
-        }
+        const title = req.params.title;
+        const includeReviews = req.query.reviews === 'true';
 
         if (!includeReviews) {
-            var movie = await Movie.findById(movieId);
+            const movie = await Movie.findOne({ title: title });
+
             if (!movie) {
                 return res.status(404).json({ message: 'Movie not found' });
             }
+
             return res.json(movie);
         }
 
-        var results = await Movie.aggregate([
+        const results = await Movie.aggregate([
             {
                 $match: {
-                    _id: new mongoose.Types.ObjectId(movieId)
+                    title: title
                 }
             },
             {
