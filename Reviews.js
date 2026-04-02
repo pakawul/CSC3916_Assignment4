@@ -4,9 +4,8 @@ var Schema = mongoose.Schema;
 mongoose.connect(process.env.DB);
 
 var ReviewSchema = new Schema({
-    movieId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Movie',
+    movieTitle: {
+        type: String,
         required: true
     },
     username: {

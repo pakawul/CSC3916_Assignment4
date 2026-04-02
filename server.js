@@ -11,7 +11,6 @@ var authController = require('./auth');
 var authJwtController = require('./auth_jwt');
 var jwt = require('jsonwebtoken');
 var cors = require('cors');
-var mongoose = require('mongoose');
 
 var User = require('./Users');
 var Movie = require('./Movies');
@@ -105,6 +104,7 @@ router.get('/movies', function(req, res) {
     });
 });
 
+// GET movie by title
 router.get('/movies/title/:title', async function(req, res) {
     try {
         const title = req.params.title;
@@ -129,8 +129,8 @@ router.get('/movies/title/:title', async function(req, res) {
             {
                 $lookup: {
                     from: 'reviews',
-                    localField: '_id',
-                    foreignField: 'movieId',
+                    localField: 'title',
+                    foreignField: 'movieTitle',
                     as: 'reviews'
                 }
             }
@@ -163,14 +163,10 @@ router.post('/movies', authJwtController.isAuthenticated, function(req, res) {
     });
 });
 
-// PUT movie
-router.put('/movies/:id', authJwtController.isAuthenticated, function(req, res) {
-    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
-        return res.status(404).json({ message: 'Movie not found' });
-    }
-
-    Movie.findByIdAndUpdate(
-        req.params.id,
+// PUT movie by title
+router.put('/movies/title/:title', authJwtController.isAuthenticated, function(req, res) {
+    Movie.findOneAndUpdate(
+        { title: req.params.title },
         {
             title: req.body.title,
             releaseDate: req.body.releaseDate,
@@ -190,13 +186,9 @@ router.put('/movies/:id', authJwtController.isAuthenticated, function(req, res) 
     );
 });
 
-// DELETE movie
-router.delete('/movies/:id', authController.isAuthenticated, function(req, res) {
-    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
-        return res.status(404).json({ message: 'Movie not found' });
-    }
-
-    Movie.findByIdAndDelete(req.params.id, function(err, deletedMovie) {
+// DELETE movie by title
+router.delete('/movies/title/:title', authController.isAuthenticated, function(req, res) {
+    Movie.findOneAndDelete({ title: req.params.title }, function(err, deletedMovie) {
         if (err) {
             return res.status(500).json({ err: err.message });
         }
@@ -211,45 +203,37 @@ router.delete('/movies/:id', authController.isAuthenticated, function(req, res) 
 REVIEW ROUTES
 */
 
-// GET all reviews for a movie
-router.get('/reviews/:movieId', async function(req, res) {
+// GET all reviews for a movie by title
+router.get('/reviews/title/:title', async function(req, res) {
     try {
-        var movieId = req.params.movieId;
+        var title = req.params.title;
 
-        if (!mongoose.Types.ObjectId.isValid(movieId)) {
-            return res.status(404).json({ message: 'Movie not found' });
-        }
-
-        var movie = await Movie.findById(movieId);
+        var movie = await Movie.findOne({ title: title });
         if (!movie) {
             return res.status(404).json({ message: 'Movie not found' });
         }
 
-        var reviews = await Review.find({ movieId: movieId });
+        var reviews = await Review.find({ movieTitle: title });
         return res.json(reviews);
     } catch (err) {
         return res.status(500).json({ err: err.message });
     }
 });
 
-// POST review
+// POST review by title
 router.post('/reviews', authJwtController.isAuthenticated, async function(req, res) {
     try {
-        var movieId = req.body.movieId;
+        var movieTitle = req.body.title;
         var reviewText = req.body.review;
         var rating = req.body.rating;
 
-        if (!mongoose.Types.ObjectId.isValid(movieId)) {
-            return res.status(404).json({ message: 'Movie not found' });
-        }
-
-        var movie = await Movie.findById(movieId);
+        var movie = await Movie.findOne({ title: movieTitle });
         if (!movie) {
             return res.status(404).json({ message: 'Movie not found' });
         }
 
         var review = new Review({
-            movieId: movieId,
+            movieTitle: movieTitle,
             username: req.user.username,
             review: reviewText,
             rating: rating
@@ -262,14 +246,13 @@ router.post('/reviews', authJwtController.isAuthenticated, async function(req, r
     }
 });
 
-// optional delete review
-router.delete('/reviews/:id', authJwtController.isAuthenticated, async function(req, res) {
+// optional delete review by title and username
+router.delete('/reviews/title/:title', authJwtController.isAuthenticated, async function(req, res) {
     try {
-        if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
-            return res.status(404).json({ message: 'Review not found' });
-        }
-
-        var deletedReview = await Review.findByIdAndDelete(req.params.id);
+        var deletedReview = await Review.findOneAndDelete({
+            movieTitle: req.params.title,
+            username: req.user.username
+        });
 
         if (!deletedReview) {
             return res.status(404).json({ message: 'Review not found' });
