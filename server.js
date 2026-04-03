@@ -203,6 +203,15 @@ router.get('/movies/:id', async function(req, res) {
             return res.status(404).json({ message: 'Movie not found' });
         }
 
+        await trackReviewAnalytics({
+            eventName: "movie_review_request",
+            movieName: results[0].title,
+            genre: results[0].genre,
+            actionPath: "/movies/:id?reviews=true",
+            eventLabel: "API Request for Movie Review",
+            requestedCount: 1
+        });
+        
         return res.json(results[0]);
     } catch (err) {
         return res.status(500).json({ err: err.message });
