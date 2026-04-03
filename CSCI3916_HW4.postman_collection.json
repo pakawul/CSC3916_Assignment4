@@ -1,0 +1,373 @@
+{
+  "info": {
+    "_postman_id": "92c29a4a-a880-42f2-acbe-fb6aaab0eb6f",
+    "name": "CSCI3916_HW4",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "52008487",
+    "_collection_link": "https://go.postman.co/collection/52008487-92c29a4a-a880-42f2-acbe-fb6aaab0eb6f?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "POST/Movies",
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "{{token}}",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"title\": \"Gladiator\",\r\n  \"releaseDate\": 2000,\r\n  \"genre\": \"Action\",\r\n  \"actors\": [\r\n    \"Russell Crowe\",\r\n    \"Joaquin Phoenix\",\r\n    \"Connie Nielsen\"\r\n  ]\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "https://csc3916-assignment4-kfb5.onrender.com/movies",
+          "protocol": "https",
+          "host": [
+            "csc3916-assignment4-kfb5",
+            "onrender",
+            "com"
+          ],
+          "path": [
+            "movies"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "POST/Signup",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"name\" :\"Paul Kim\",\r\n  \"username\": \"paul1\",\r\n  \"password\": \"pass123\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "https://csc3916-assignment4-kfb5.onrender.com/signup",
+          "protocol": "https",
+          "host": [
+            "csc3916-assignment4-kfb5",
+            "onrender",
+            "com"
+          ],
+          "path": [
+            "signup"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "POST/Signin",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "var json = pm.response.json();\r",
+              "if (json.token) {\r",
+              " pm.environment.set(\"token\", json.token);\r",
+              "}"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"username\": \"paul1\",\r\n  \"password\": \"pass123\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "https://csc3916-assignment4-kfb5.onrender.com/signin",
+          "protocol": "https",
+          "host": [
+            "csc3916-assignment4-kfb5",
+            "onrender",
+            "com"
+          ],
+          "path": [
+            "signin"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "GET/Movies",
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "GET",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "https://csc3916-assignment4-kfb5.onrender.com/movies/69ce35376829af005117f419",
+          "protocol": "https",
+          "host": [
+            "csc3916-assignment4-kfb5",
+            "onrender",
+            "com"
+          ],
+          "path": [
+            "movies",
+            "69ce35376829af005117f419"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "GET/Reviews",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "https://csc3916-assignment4-kfb5.onrender.com/movies/69cf3b46b8341b005079d54a?reviews=true",
+          "protocol": "https",
+          "host": [
+            "csc3916-assignment4-kfb5",
+            "onrender",
+            "com"
+          ],
+          "path": [
+            "movies",
+            "69cf3b46b8341b005079d54a"
+          ],
+          "query": [
+            {
+              "key": "reviews",
+              "value": "true"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "POST/Reviews",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "{{token}}",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"title\": \"Gladiator\",\r\n  \"review\": \"Epic, emotional, and very well acted.\",\r\n  \"rating\": 5\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "https://csc3916-assignment4-kfb5.onrender.com/reviews",
+          "protocol": "https",
+          "host": [
+            "csc3916-assignment4-kfb5",
+            "onrender",
+            "com"
+          ],
+          "path": [
+            "reviews"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "POST/ReviewsErr",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "{{token}}",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"movieId\": \"69ce18b43b28dc003eb21e91\",\r\n  \"review\": \"Great movie with a very interesting plot.\",\r\n  \"rating\": 5\r\n}"
+        },
+        "url": {
+          "raw": "https://csc3916-assignment4-kfb5.onrender.com/reviews",
+          "protocol": "https",
+          "host": [
+            "csc3916-assignment4-kfb5",
+            "onrender",
+            "com"
+          ],
+          "path": [
+            "reviews"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "GET/ReviewsErr",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "https://csc3916-assignment4-kfb5.onrender.com/movies/69ce18b43b28dc003eb21e91?reviews=true",
+          "protocol": "https",
+          "host": [
+            "csc3916-assignment4-kfb5",
+            "onrender",
+            "com"
+          ],
+          "path": [
+            "movies",
+            "69ce18b43b28dc003eb21e91"
+          ],
+          "query": [
+            {
+              "key": "reviews",
+              "value": "true"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "GET/MoviesErr",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "",
+            "value": "",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "https://csc3916-assignment4-kfb5.onrender.com/movies/69ce18b43b28dc003eb21e99",
+          "protocol": "https",
+          "host": [
+            "csc3916-assignment4-kfb5",
+            "onrender",
+            "com"
+          ],
+          "path": [
+            "movies",
+            "69ce18b43b28dc003eb21e99"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "DELETE/Movie",
+      "request": {
+        "auth": {
+          "type": "basic",
+          "basic": [
+            {
+              "key": "password",
+              "value": "{{vault:authorization-password}}",
+              "type": "string"
+            },
+            {
+              "key": "username",
+              "value": "cu_user",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "https://csc3916-assignment4-kfb5.onrender.com/movies/Inception",
+          "protocol": "https",
+          "host": [
+            "csc3916-assignment4-kfb5",
+            "onrender",
+            "com"
+          ],
+          "path": [
+            "movies",
+            "Inception"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "DELETE/Reviews",
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "{{token}}",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "https://csc3916-assignment4-kfb5.onrender.com/reviews/69ce35556829af005117f41e",
+          "protocol": "https",
+          "host": [
+            "csc3916-assignment4-kfb5",
+            "onrender",
+            "com"
+          ],
+          "path": [
+            "reviews",
+            "69ce35556829af005117f41e"
+          ]
+        }
+      },
+      "response": []
+    }
+  ]
+}
