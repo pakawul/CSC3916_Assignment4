@@ -26,6 +26,50 @@ app.use(passport.initialize());
 
 var router = express.Router();
 
+async function trackReviewAnalytics({
+    eventName,
+    movieName,
+    genre,
+    actionPath,
+    eventLabel,
+    requestedCount
+}) {
+    try {
+        if (!process.env.GA4_MEASUREMENT_ID || !process.env.GA4_API_SECRET) {
+            return;
+        }
+
+        const url =
+            `https://www.google-analytics.com/mp/collect?measurement_id=${process.env.GA4_MEASUREMENT_ID}&api_secret=${process.env.GA4_API_SECRET}`;
+
+        const payload = {
+            client_id: "movie-api-server",
+            events: [
+                {
+                    name: eventName,
+                    params: {
+                        movie_name: movieName || "",
+                        genre: genre || "",
+                        action_path: actionPath || "",
+                        event_label: eventLabel || "",
+                        requested_count: requestedCount || 1
+                    }
+                }
+            ]
+        };
+
+        await fetch(url, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(payload)
+        });
+    } catch (err) {
+        console.log("GA4 tracking error:", err.message);
+    }
+}
+
 /*
 AUTH ROUTES
 */
